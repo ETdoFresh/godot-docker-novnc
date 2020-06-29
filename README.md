@@ -1,18 +1,32 @@
 # Godot Engine editor in Docker container
 
-Adapted [docker-unity-3d](https://github.com/nenadg/docker-unity3d) to work
-with [Godot Engine](https://godotengine.org/). I used [nanodeath/godot](https://hub.docker.com/r/nanodeath/godot/)
-as reference how to put Godot into container.
+Adapted [godot-docker-vnc](https://github.com/TeddyDD/godot-docker-vnc) to work with the [Godot Engine](https://godotengine.org/) using [noVNC](https://novnc.com/).
 
-Created for **fun**, for CI you should use headless container with Godot server
-for example [nanodeath/godot](https://hub.docker.com/r/nanodeath/godot/)
+My goal was to run this in my browser to use on my ipad. It works, but the lag spikes prove to be a little bit too annoying for serious use.
 
-I think audio is not working.
+The audio may not be working.
 
-## Usage
+## Build
 
 ``` sh
-docker-compose up
+docker build . -t godot-docker-vnc
+```
+
+## Run
+``` sh
+docker run -dtp 8080:8080 godot-docker-vnc
+```
+
+## Usage
+For full resolution in the VNC terminal (xterm)...
+
+``` sh
+godot --resolution 1280x720 *GODOT_PROJECT*/project.godot
 ````
 
-Connect to container using any VNC viewer: `172.16.250.10:5900`. `/context` is mounted volume.
+Connect to container using web browser: 
+
+```http
+http://localhost:8080/vnc.html
+```
+

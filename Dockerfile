@@ -1,25 +1,30 @@
 FROM ubuntu:xenial
 
-MAINTAINER Daniel Lewan <vision360.daniel@gmail.com>
+WORKDIR /root
 
-ARG GODOT_VERSION=2.1.4
-ARG GODOT_VARIANT=stable
+RUN apt-get update
 
-RUN apt-get update \
-    && apt-get install -y wget unzip ca-certificates x11vnc xvfb libxcursor1 libasound2 libpulse0 libfreetype6 libxinerama1 libzlcore0.13 
-RUN  wget \
-"http://download.tuxfamily.org/godotengine/${GODOT_VERSION}/Godot_v${GODOT_VERSION}-${GODOT_VARIANT}_x11.64.zip" \
-"http://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}/Godot_v${GODOT_VERSION}-${GODOT_VARIANT}_export_templates.tpz" \
-"https://dl.itch.ovh/butler/linux-amd64/head/butler" 
-RUN chmod +x butler \
-    && mv butler /bin/ \
-    && unzip Godot_v*_x11.64.zip \
-    && mv Godot_v*_x11.64 /bin/godot \
-    && mkdir ~/.godot \
-    && unzip -d ~/.godot Godot_v*_export_templates.tpz \
-    && rm -f *.zip *.tpz \
-    && apt-get purge -y --auto-remove wget unzip \
-&& rm -rf /var/lib/apt/lists/*
-ADD /entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+# NoVNC
+RUN apt-get install -y git python3 supervisor x11vnc
+RUN git clone https://github.com/novnc/noVNC.git /root/noVNC
+RUN git clone https://github.com/novnc/websockify /root/noVNC/utils/websockify
+RUN rm -rf /root/noVNC/.git
+RUN rm -rf /root/noVNC/utils/websockify/.git
+RUN sed -i -- "s/ps -p/ps -o pid | grep/g" /root/noVNC/utils/launch.sh
+
+# Godot
+RUN apt-get install -y wget unzip ca-certificates x11vnc xvfb libxcursor1 libasound2 libpulse0 libfreetype6 libxinerama1 libzlcore0.13
+RUN wget "http://download.tuxfamily.org/godotengine/3.2.2/Godot_v3.2.2-stable_x11.64.zip"
+RUN unzip Godot_v*_x11.64.zip
+RUN mv Godot_v*_x11.64 /bin/godot
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+EXPOSE 8080
+
+# Cleanup
+RUN rm -f *.zip *.tpz
+RUN apt-get purge -y --auto-remove wget unzip
+RUN rm -rf /var/lib/apt/lists/*
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
