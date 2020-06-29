@@ -9,12 +9,12 @@ The audio may not be working.
 ## Build
 
 ``` sh
-docker build . -t godot-docker-vnc
+docker build . -t godot-docker-novnc
 ```
 
 ## Run
 ``` sh
-docker run -dtp 8080:8080 godot-docker-vnc
+docker run -dtp 8080:8080 godot-docker-novnc
 ```
 
 ## Usage
