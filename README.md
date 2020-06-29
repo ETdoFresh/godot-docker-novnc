@@ -18,14 +18,6 @@ docker run -dtp 8080:8080 etdofresh/godot-docker-novnc
 ```
 
 ## Usage
-For full resolution in the VNC terminal (xterm)...
-
-``` sh
-godot --resolution 1280x720 *GODOT_PROJECT*/project.godot
-````
-
-Connect to container using web browser: 
-
 ```http
 http://localhost:8080/vnc.html
 ```

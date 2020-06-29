@@ -19,6 +19,7 @@ RUN unzip Godot_v*_x11.64.zip
 RUN mv Godot_v*_x11.64 /bin/godot
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY MyProject /root/MyProject
 
 EXPOSE 8080
 
